@@ -1,0 +1,342 @@
+<html>
+
+<head>
+    <title>MINH TÂN HAIR SALON</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="main.css" type="text/css" />
+    <link type="icon/x-icon" href="favicon.ico" rel="shortcut icon" />
+    <script type="text/javascript" src="Winwheel.min.js"></script>
+    <script src="TweenMax.min.js"></script>
+</head>
+
+<body>
+    <div align="center">
+
+        <table cellpadding="0" cellspacing="0" border="0">
+            <tr>
+                <td>
+                    <h1>MINH TÂN HAIR SALON</h1>
+                    <h2>Vòng quay may mắn</h2>
+                    <h2>Cảm ơn quý khách đã sử dụng dịch của của chúng tôi</h2>
+                </td>
+                <td width="438" height="582" class="the_wheel" align="center" valign="center">
+                    <canvas id="canvas" width="434" height="434">
+                        <p style="{color: white}" align="center">Sorry, your browser doesn't support canvas. Please try
+                            another.</p>
+                    </canvas>
+                </td>
+                <td>
+                    <button id="spin_start" class="btn" onClick="startSpin();">Quay ngay</button>
+                    <button id="spin_reset" class="btn" onClick="resetWheel();">Quay lại</button>
+                </td>
+            </tr>
+        </table>
+
+
+
+    </div><!-- Popup trúng thưởng -->
+    <div id="prizeModal" class="prize-popup">
+        <div class="prize-popup-content">
+            <span class="close" onclick="closePrizeModal()">&times;</span>
+            <h2 class="blinking-text">Chúc mừng!</h2> <!-- Áp dụng nhấp nháy cho chữ -->
+            <p id="prizeText">Bạn quay vào ô: </p>
+
+        </div>
+    </div>
+
+    <!-- Popup nhập tên khách hàng -->
+    <div id="customerPopup" class="popup">
+        <div class="popup-content">
+            <span class="close" onclick="closeCustomerPopup()">&times;</span>
+            <h3>Xin mời quý khách nhập tên để nhận phần quà từ <br>MINH TÂN HAIR SALON</h3>
+
+            <input type="text" id="customerName" placeholder="Nhập tên khách hàng" required><br><br>
+            <button onclick="saveCustomerName()">Xác nhận</button>
+        </div>
+    </div>
+    <!-- Hộp thoại để cài đặt tỷ lệ phần thưởng -->
+
+
+    <!-- Popup để cài đặt tỉ lệ phần thưởng -->
+    <div id="popup" class="popup">
+        <div class="popup-content">
+            <span class="close" onclick="closePopup()">&times;</span>
+            <h3>Thiết lập tỉ lệ phần quà</h3>
+            <label for="ratio1">1 Vàng 9999 (%):</label>
+            <input type="number" id="ratio1" min="0" max="100" value="0"><br>
+
+            <label for="ratio2">1 Cặp dầu gội (%):</label>
+            <input type="number" id="ratio2" min="0" max="100" value="0"><br>
+
+            <label for="ratio3">1 Gói collagen (%):</label>
+            <input type="number" id="ratio3" min="0" max="100" value="0"><br>
+
+            <label for="ratio4">3 lần hấp tóc (%):</label>
+            <input type="number" id="ratio4" min="0" max="100" value="0"><br>
+
+            <label for="ratio5">Giảm 10% (%):</label>
+            <input type="number" id="ratio5" min="0" max="100" value="50"><br>
+
+            <label for="ratio6">May mắn lần sau! (%):</label>
+            <input type="number" id="ratio6" min="0" max="100" value="50"><br>
+
+            <button onclick="saveRatios()">Lưu tỉ lệ</button>
+        </div>
+    </div>
+    <audio id="audioPlayer" src="win.mp3" preload="auto"></audio>
+    <script>
+        function createConfetti() {
+            for (let i = 0; i < 100; i++) {
+                let confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = `${Math.random() * 100}vw`;
+                confetti.style.top = `${Math.random() * 50}vh`;
+                confetti.style.transform += ` translateX(${(Math.random() - 0.5) * 2}vw)`;
+                confetti.style.transform += ` rotate(${Math.random() * 360}deg)`;
+                document.body.appendChild(confetti);
+            }
+        }
+        window.onload = createConfetti;
+        let customerName = ""; // Biến để lưu tên khách hàng
+
+        // Hiển thị popup nhập tên khách hàng
+        function openCustomerPopup() {
+            document.getElementById("customerPopup").style.display = "block";
+
+        }
+
+        // Đóng popup nhập tên khách hàng
+        function closeCustomerPopup() {
+            document.getElementById("customerPopup").style.display = "none";
+        }
+
+        // Lưu tên khách hàng và đóng popup
+        function saveCustomerName() {
+            customerName = document.getElementById("customerName").value;
+
+            if (customerName) {
+                closeCustomerPopup(); // Đóng popup khi đã nhập tên
+                startSpin(); // Bắt đầu quay sau khi nhập tên
+            } else {
+                alert("Vui lòng nhập tên khách hàng!"); // Thông báo nếu chưa nhập tên
+            }
+        }
+        function showPrizeModal(prize) {
+            document.getElementById("prizeText").innerText = "Quý khách " + customerName + " đã quay vào ô: " + prize;
+            document.getElementById("prizeModal").style.display = "block";
+
+            // Sau khi hiển thị kết quả, đặt lại tên khách hàng để lần quay sau nhập lại
+            customerName = "";
+            wheelSpinning = false; // Đặt lại trạng thái quay
+        }
+
+
+        // Hàm đóng popup
+        function closePrizeModal() {
+            document.getElementById("prizeModal").style.display = "none";
+        }
+
+        // Hàm lưu các tỷ lệ vào localStorage
+        // Mở popup
+        function openPopup() {
+            document.getElementById("popup").style.display = "block";
+            loadRatios(); // Tải tỷ lệ đã lưu (nếu có)
+        }
+
+        // Đóng popup
+        function closePopup() {
+            document.getElementById("popup").style.display = "none";
+        }
+        // Cập nhật hàm bắt đầu quay khi nhấn nút quay
+        document.getElementById("spin_start").addEventListener("click", function () {
+            if (!customerName) {
+                openCustomerPopup(); // Mở popup để nhập tên nếu chưa có tên
+            }
+        });
+        // Hàm lưu các tỷ lệ vào localStorage
+        function saveRatios() {
+            const ratios = [
+                parseInt(document.getElementById('ratio1').value),
+                parseInt(document.getElementById('ratio2').value),
+                parseInt(document.getElementById('ratio3').value),
+                parseInt(document.getElementById('ratio4').value),
+                parseInt(document.getElementById('ratio5').value),
+                parseInt(document.getElementById('ratio6').value)
+            ];
+
+            // Lưu các tỷ lệ vào localStorage
+            localStorage.setItem('ratios', JSON.stringify(ratios));
+
+            closePopup(); // Đóng popup sau khi lưu
+        }
+
+        // Hàm lấy các tỷ lệ từ localStorage
+        function loadRatios() {
+            const storedRatios = localStorage.getItem('ratios');
+            if (storedRatios) {
+                const ratios = JSON.parse(storedRatios);
+
+                // Đặt lại các giá trị vào form
+                document.getElementById('ratio1').value = ratios[0];
+                document.getElementById('ratio2').value = ratios[1];
+                document.getElementById('ratio3').value = ratios[2];
+                document.getElementById('ratio4').value = ratios[3];
+                document.getElementById('ratio5').value = ratios[4];
+                document.getElementById('ratio6').value = ratios[5];
+            }
+        }
+
+        // Gọi hàm loadRatios khi trang web được mở
+        window.onload = function () {
+            loadRatios();
+        };
+
+        //Thông số vòng quay
+        let duration = 5; //Thời gian kết thúc vòng quay
+        let spins = 15; //Quay nhanh hay chậm 3, 8, 15
+        let theWheel = new Winwheel({
+            'numSegments': 6,     // Chia 6 phần bằng nhau
+            'outerRadius': 212,   // Đặt bán kính vòng quay
+            'textFontSize': 18,    // Đặt kích thước chữ
+            'rotationAngle': 0,     // Đặt góc vòng quay từ 0 đến 360 độ.
+            'textFillStyle': 'white',
+            'strokeStyle': 'white',
+            'fillStyle': 'white',
+
+            'segments':        // Các thành phần bao gồm màu sắc và văn bản.
+                [
+                    { 'fillStyle': '#ed2000', 'text': '1 Vàng 9999' },
+                    { 'fillStyle': '#ff7700', 'text': '1 Cặp dầu gội' },
+                    { 'fillStyle': '#4B0082', 'text': '1 Gói collagen' },
+                    { 'fillStyle': '#1E90FF', 'text': '3 lần hấp tóc' },
+                    { 'fillStyle': '#FF00FF', 'text': 'Giảm 10%' },
+                    { 'fillStyle': '#89f26e', 'text': 'May mắn lần sau!' }
+                ],
+            'animation': {
+                'type': 'spinToStop',
+                'duration': duration,
+                'spins': spins,
+                'callbackSound': playSound,     //Hàm gọi âm thanh khi quay
+                'soundTrigger': 'pin',         //Chỉ định chân là để kích hoạt âm thanh
+                'callbackFinished': alertPrize,    //Hàm hiển thị kết quả trúng giải thưởng
+            },
+            'pins':
+            {
+                'number': 32   //Số lượng chân. Chia đều xung quanh vòng quay.
+            }
+        });
+
+        //Kiểm tra vòng quay
+        let wheelSpinning = false;
+
+        //Tạo âm thanh và tải tập tin tick.mp3.
+        let audio = new Audio('tick.mp3');
+        function playSound() {
+            audio.pause();
+            audio.currentTime = 0;
+            audio.play();
+        }
+
+        //Hiển thị các nút vòng quay
+        function statusButton(status) {
+            if (status == 1) { //trước khi quay
+                document.getElementById('spin_start').removeAttribute("disabled");
+                document.getElementById('spin_reset').classList.add("hide");
+            } else if (status == 2) { //đang quay
+                document.getElementById('spin_start').setAttribute("disabled", false);
+                document.getElementById('spin_reset').classList.add("hide");
+            } else if (status == 3) { //kết quả
+                document.getElementById('spin_reset').classList.remove("hide");
+            } else {
+
+            }
+        }
+        statusButton(1);
+
+        //stopAngle
+        function stopAngle() {
+            const storedRatios = localStorage.getItem('ratios');
+            let ratios = [0, 0, 0, 0, 50, 50]; // Giá trị mặc định
+
+            if (storedRatios) {
+                ratios = JSON.parse(storedRatios);
+            }
+
+            const rewards = [
+                { name: "Quà 1", ratio: ratios[0], startAngle: 0, endAngle: 60 },
+                { name: "Quà 2", ratio: ratios[1], startAngle: 60, endAngle: 120 },
+                { name: "Quà 3", ratio: ratios[2], startAngle: 120, endAngle: 180 },
+                { name: "Quà 4", ratio: ratios[3], startAngle: 180, endAngle: 240 },
+                { name: "Quà 5", ratio: ratios[4], startAngle: 240, endAngle: 300 },
+                { name: "Quà 6", ratio: ratios[5], startAngle: 300, endAngle: 360 }
+            ];
+
+            // Tính tổng tỉ lệ (nên là 100%)
+            let totalRatio = 0;
+            rewards.forEach(reward => {
+                totalRatio += reward.ratio;
+            });
+
+            // Chọn phần quà dựa trên tỉ lệ
+            let random = Math.random() * totalRatio;
+            let selectedReward = null;
+
+            for (let reward of rewards) {
+                if (random < reward.ratio) {
+                    selectedReward = reward;
+                    break;
+                }
+                random -= reward.ratio;
+            }
+
+            // Tính góc dừng ngẫu nhiên trong khoảng của phần quà đã chọn
+            let stopAt = Math.floor(Math.random() * (selectedReward.endAngle - selectedReward.startAngle)) + selectedReward.startAngle;
+            theWheel.animation.stopAngle = stopAt;
+        }
+
+        //startSpin
+        function startSpin() {
+            if (!customerName) {
+                openCustomerPopup(); // Hiển thị popup nếu chưa nhập tên khách hàng
+            } else if (wheelSpinning == false) {
+                // CSS hiển thị button
+                statusButton(2);
+                stopAngle();
+                theWheel.startAnimation();
+                wheelSpinning = true;
+            }
+        }
+
+
+        //Result
+        function alertPrize(indicatedSegment) {
+            audioPlayer.play();
+            showPrizeModal(indicatedSegment.text);
+            createConfetti();
+
+            //CSS hiển thị button
+            statusButton(3);
+        }
+
+        //resetWheel
+        function resetWheel() {
+            //CSS hiển thị button
+            statusButton(1);
+
+            theWheel.stopAnimation(false);  // Stop the animation, false as param so does not call callback function.
+            theWheel.rotationAngle = 0;     // Re-set the wheel angle to 0 degrees.
+            theWheel.draw();                // Call draw to render changes to the wheel.
+
+            wheelSpinning = false;          // Reset to false to power buttons and spin can be clicked again.
+        }
+        document.addEventListener('keydown', function (event) {
+            // Kiểm tra nếu phím Ctrl và phím I được nhấn cùng lúc
+            if (event.ctrlKey && event.key === 'i') {
+                event.preventDefault(); // Ngăn chặn hành động mặc định của trình duyệt (như mở cửa sổ kiểm tra)
+                openPopup();
+            }
+        });
+    </script>
+</body>
+
+</html>

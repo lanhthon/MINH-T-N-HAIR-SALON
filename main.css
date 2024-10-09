@@ -1,0 +1,326 @@
+/*
+Description:
+    Contains all the styles for the winning wheel page.
+    
+Verison History:
+    2012-01-28, Douglas McKechie
+    - Created based off earlier version.
+    
+    2015-09-26, Douglas McKechie
+    - Minor updates for the 2.0 winwheel example.
+*/
+
+/* CSS cho ảnh nền full màn hình */
+body {
+    font-family: arial;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    /* Đảm bảo body có chiều cao bằng 100% viewport */
+    background-image: url('anhnen.jpg');
+    /* Thay link bằng đường dẫn ảnh của bạn */
+    background-size: cover;
+    /* Đảm bảo ảnh bao phủ toàn bộ màn hình */
+    background-position: center;
+    /* Đặt tâm của ảnh nền vào giữa */
+    background-repeat: no-repeat;
+    /* Không lặp lại ảnh nền */
+    background-attachment: fixed;
+    /* Ảnh nền cố định khi cuộn trang */
+}
+
+/* Sets the background image for the wheel */
+td.the_wheel {
+    background-image: url(./wheel_back.png);
+    background-position: center;
+    background-repeat: none;
+
+}
+
+/* Do some css reset on selected elements */
+h1,
+p {
+    margin: 0;
+}
+
+div.power_controls {
+    margin-right: 70px;
+}
+
+div.html5_logo {
+    margin-left: 70px;
+}
+
+/* Styles for the power selection controls */
+table.power {
+    background-color: #df1a1a;
+    cursor: pointer;
+    border: 1px solid #ffffff;
+}
+
+table.power th {
+    background-color: white;
+    cursor: default;
+}
+
+td.pw1 {
+    background-color: #6fe8f0;
+}
+
+td.pw2 {
+    background-color: #86ef6f;
+}
+
+td.pw3 {
+    background-color: #ef6f6f;
+}
+
+.btn {
+    padding: 10px 20px;
+}
+
+.hide {
+    display: none;
+}
+
+/* Style applied to the spin button once a power has been selected */
+.clickable {
+    cursor: pointer;
+}
+
+/* Other misc styles */
+.margin_bottom {
+    margin-bottom: 5px;
+}
+
+.popup {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    border-radius: 10px;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    /* Màu nền đen mờ */
+}
+
+/* Nội dung popup */
+.popup-content {
+    background-color: #ffffffbb;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 300px;
+    text-align: center;
+    border-radius: 10px;
+}
+
+/* Nút đóng popup */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Ẩn popup mặc định */
+.prize-popup {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    /* Màu nền đen mờ */
+}
+
+/* Nội dung popup */
+.prize-popup-content {
+    background-color: white;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 300px;
+    text-align: center;
+}
+
+/* Nút đóng popup */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Hiệu ứng nhấp nháy cho chữ "Chúc mừng!" */
+@keyframes blinkText {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.blinking-text {
+    animation: blinkText 1s infinite;
+    /* Nhấp nháy mỗi 1 giây */
+    color: red;
+    /* Bạn có thể thay đổi màu sắc nếu muốn */
+    font-size: 24px;
+    /* Điều chỉnh kích thước chữ */
+}
+
+.confetti {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: red;
+    opacity: 0;
+    transform: rotate(45deg);
+    animation: explode 1s forwards, fall 3s linear forwards;
+    z-index: 999;
+}
+
+@keyframes explode {
+    0% {
+        opacity: 1;
+        transform: scale(0) rotate(45deg);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1) rotate(45deg);
+    }
+}
+
+@keyframes fall {
+    to {
+        transform: translateY(100vh) rotate(90deg);
+    }
+}
+
+/* Cách trang trí cho các trường nhập liệu */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea {
+    width: 100%;
+    /* Đặt chiều rộng của trường nhập liệu đầy đủ */
+    padding: 10px;
+    /* Khoảng cách giữa nội dung và viền */
+    margin: 10px 0;
+    /* Khoảng cách trên và dưới trường nhập liệu */
+    border: 2px solid #ccc;
+    /* Đường viền màu xám nhạt */
+    border-radius: 5px;
+    /* Bo tròn góc */
+    font-size: 16px;
+    /* Kích thước chữ */
+    transition: border-color 0.3s, box-shadow 0.3s;
+    /* Hiệu ứng chuyển tiếp */
+}
+
+/* Hiệu ứng khi trường nhập liệu được chọn */
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+textarea:focus {
+    border-color: #6fe8f0;
+    /* Đổi màu viền khi được chọn */
+    box-shadow: 0 0 5px rgba(110, 232, 240, 0.5);
+    /* Hiệu ứng bóng */
+    outline: none;
+    /* Xóa viền mặc định */
+}
+
+/* Các trường nhập liệu lỗi */
+input[type="text"].error,
+input[type="email"].error,
+input[type="password"].error,
+textarea.error {
+    border-color: #ef6f6f;
+    /* Đường viền màu đỏ khi có lỗi */
+}
+
+/* Nút gửi */
+button {
+    background-color: #1de258;
+    /* Màu nền của nút */
+    color: white;
+    /* Màu chữ của nút */
+    padding: 10px 20px;
+    /* Khoảng cách trong nút */
+    border: none;
+    /* Xóa viền mặc định */
+    border-radius: 5px;
+    /* Bo tròn góc */
+    font-size: 16px;
+    /* Kích thước chữ */
+    cursor: pointer;
+    /* Con trỏ thay đổi khi hover */
+    transition: background-color 0.3s;
+    /* Hiệu ứng chuyển tiếp */
+}
+
+/* Hiệu ứng khi di chuột qua nút */
+button:hover {
+    background-color: #86ef6f;
+    /* Đổi màu nền khi di chuột qua */
+}
+
+/* Style cho textarea */
+textarea {
+    resize: vertical;
+    /* Cho phép thay đổi kích thước theo chiều dọc */
+}
+
+/* Hiệu ứng cho placeholder */
+input::placeholder,
+textarea::placeholder {
+    color: #aaa;
+    /* Màu sắc của chữ placeholder */
+    opacity: 1;
+    /* Đảm bảo chữ placeholder luôn rõ ràng */
+}
+
+h3 {
+    color: chocolate;
+}
+
+p {
+    color: coral;
+}
+
+h1 {
+    color: white;
+}
+
+h2 {
+    color: #6fe8f0;
+}
